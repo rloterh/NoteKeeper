@@ -4,10 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 import android.view.Menu;
@@ -141,7 +139,7 @@ public class NoteActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.menu_main, menu);
+        getMenuInflater().inflate(R.menu.menu_note, menu);
         return true;
     }
 
@@ -159,10 +157,33 @@ public class NoteActivity extends AppCompatActivity {
         }else if(id==R.id.action_cancel){
             mIsCancelling = true;
             finish();
-
+        }else if(id == R.id.action_next){
+            moveNext();
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        // determines what action you should take on a menu at given condition
+
+        MenuItem item = menu.findItem(R.id.action_next);//select the appropraite menu item
+        int lastNoteIndex = DataManager.getInstance().getNotes().size() -1;
+        item.setEnabled(mNotePosition < lastNoteIndex);
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    private void moveNext() {
+        saveNote(); //save notes before moving to next note
+
+        ++mNotePosition;
+        mNoteInfo = DataManager.getInstance().getNotes().get(mNotePosition);
+
+        saveOriginalNoteValue();
+        displayNote(mSpinnerCourses, mTextNoteTitle, mTextNoteText);
+
+        invalidateOptionsMenu();//will make onPrepareOptionsMenu called again after each iteration
     }
 
     private void sendEmail() {

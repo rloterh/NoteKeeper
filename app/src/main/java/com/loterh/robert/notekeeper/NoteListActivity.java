@@ -7,6 +7,8 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.view.View;
 import android.widget.AdapterView;
@@ -16,8 +18,9 @@ import android.widget.ListView;
 import java.util.List;
 
 public class NoteListActivity extends AppCompatActivity {
+    private NoteRecyclerAdapter mNoteRecyclerAdapter;
 
-    private ArrayAdapter<NoteInfo> mArrayAdapterNoteInfo;
+    //private ArrayAdapter<NoteInfo> mArrayAdapterNoteInfo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,11 +44,13 @@ public class NoteListActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         //ArrayAdapter needs to know which dataset were changed
-        mArrayAdapterNoteInfo.notifyDataSetChanged();
+        //mArrayAdapterNoteInfo.notifyDataSetChanged();
+
+        mNoteRecyclerAdapter.notifyDataSetChanged();
     }
 
     private void initializeDisplayContent() {
-        // object marked as final enables it to be referenced inside an anonymous class
+      /*  // object marked as final enables it to be referenced inside an anonymous class
         final ListView listViewNotes = findViewById(R.id.lits_notes);
 
         List<NoteInfo> notes = DataManager.getInstance().getNotes();
@@ -61,7 +66,15 @@ public class NoteListActivity extends AppCompatActivity {
                 intent.putExtra(NoteActivity.NOTE_POSITION, position);
                 startActivity(intent);
             }
-        });
+        });*/
+
+        final RecyclerView recyclerNotes = findViewById(R.id.list_notes);
+        final LinearLayoutManager  noteLayoutManager = new LinearLayoutManager(this);
+        recyclerNotes.setLayoutManager(noteLayoutManager);
+
+        List<NoteInfo> notes = DataManager.getInstance().getNotes();
+        mNoteRecyclerAdapter = new NoteRecyclerAdapter(this,notes);
+        recyclerNotes.setAdapter(mNoteRecyclerAdapter);
     }
 
 }
